@@ -1,0 +1,13 @@
+[package]
+name = "xgraft"
+version = "0.1.0"
+edition = "2021"
+authors = ["taku-256"]
+description = "Import files into MPLAB X IDE projects"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+quick-xml = "0.37"
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
