@@ -6,6 +6,15 @@ It copies files into the project directory and automatically registers them in `
 
 ## Install
 
+### Using Homebrew (macOS)
+
+```bash
+brew tap taku-256/xgraft
+brew install xgraft
+```
+
+### Using Cargo
+
 ```bash
 cargo install --path .
 ```
