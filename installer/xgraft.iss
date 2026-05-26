@@ -3,16 +3,16 @@
 [Setup]
 AppName=xgraft
 AppVersion={#MyAppVersion}
-DefaultDirName={autopf}\xgraft
+DefaultDirName={localappdata}\xgraft
 DefaultGroupName=xgraft
-OutputDir=installer/output
+OutputDir=output
 OutputBaseFilename=xgraft-setup-{#MyAppVersion}
 Compression=lzma2
 SolidCompression=yes
 UninstallDisplayIcon={app}\xgraft.exe
 
 [Files]
-Source: "target\x86_64-pc-windows-msvc\release\xgraft.exe"; DestDir: "{app}"
+Source: "..\target\x86_64-pc-windows-msvc\release\xgraft.exe"; DestDir: "{app}"
 
 [Code]
 
