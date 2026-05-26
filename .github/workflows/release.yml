@@ -52,13 +52,6 @@ jobs:
             cargo build --release --target ${{ matrix.job.target }}
           fi
 
-      - name: Build (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          cargo build --release --target ${{ matrix.job.target }}
-
-      # ★ここが修正ポイント（tar.gz化）
       - name: Package artifact (Unix)
         if: runner.os != 'Windows'
         shell: bash
@@ -68,21 +61,44 @@ jobs:
           cp "$BIN" dist/
           tar -czf "${PROJECT_NAME}-${{ github.ref_name }}-${{ matrix.job.target }}.tar.gz" -C dist .
 
+      - name: Install Inno Setup
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install innosetup -y
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          cargo build --release --target ${{ matrix.job.target }}
+
       - name: Package artifact (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           $bin = "target/${{ matrix.job.target }}/release/${{ env.PROJECT_NAME }}.exe"
-          $out = "${{ env.PROJECT_NAME }}-${{ github.ref_name }}-${{ matrix.job.target }}.tar.gz"
+          $out = "${{ env.PROJECT_NAME }}-${{ github.ref_name }}-${{ matrix.job.target }}.zip"
           New-Item -ItemType Directory dist -Force | Out-Null
           Copy-Item $bin dist/
-          tar -czf $out -C dist .
+          Compress-Archive -Path dist/* -DestinationPath $out -Force
+
+      - name: Build installer
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart("v")
+          $env:APP_VERSION = $version
+          iscc installer/xgraft.iss
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         with:
+          overwrite_files: true
           files: |
             *.tar.gz
+            *.zip
+            installer/output/*.exe
 
   trigger-brew:
     needs: build
